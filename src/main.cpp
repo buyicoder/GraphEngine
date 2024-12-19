@@ -1,6 +1,8 @@
 #include <iostream>
 #include <cstdint>
 #include <vector>
+#include <filesystem>
+#include <string>
 
 #include "glad/glad.h"
 #include "GLFW/glfw3.h"
@@ -19,6 +21,24 @@ using Utils::Camera;
 using Utils::Shader;
 using Utils::Model;
 
+bool DetectMouseOutsideClick() {
+    ImGuiIO& io = ImGui::GetIO();
+
+    // 如果鼠标未被 ImGui 捕获，且发生点击
+    if (!io.WantCaptureMouse) {
+        std::cout << "Mouse clicked outside all ImGui windows!" << std::endl;
+        return true;
+    }
+    else {
+        std::cout << ImGui::IsMouseClicked(0) << " " << !io.WantCaptureMouse << std::endl;
+        std::cout << "Mouse clicked inside an ImGui window." << std::endl;
+        return false;
+    }
+}
+
+
+namespace fs = std::filesystem;
+
 // 新增：加载支持中文的字体
 void loadChineseFont() {
     ImGuiIO& io = ImGui::GetIO();
@@ -32,7 +52,10 @@ void error_callback(int code, const char *description);
 void process_input(GLFWwindow* window);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
-
+bool DrawHoverBorder(const char* label, const char* shortcut = nullptr);
+void SetupImGuiStyle();
+void DrawResourceExplorer();
+void DisplayDirectoryContents(const std::string& path);
 // screen settings
 static uint32_t SCR_WIDTH = 800;
 static uint32_t SCR_HEIGHT = 600;
@@ -45,6 +68,44 @@ bool init_mouse = true;
 bool camera_movement_enabled = true;
 float base_angle_y = 0.0f;
 float angle_x = 0.0f;
+
+//windows
+// 全局变量，控制资源管理器窗口是否显示
+bool showResourceExplorer = false;
+bool showWindowBar = false;
+// 当前浏览的文件夹路径（默认值为当前工作目录）
+std::string currentPath = fs::current_path().string();
+
+
+//窗口栏
+// 定义一个窗口结构
+struct Window {
+    std::string name;    // 窗口名称
+    bool isOpen;         // 窗口是否打开
+};
+
+// 全局变量，保存窗口列表
+std::vector<Window> windows = {
+    {"Home", true},      // 默认一个 Home 窗口
+    {"Settings", true},   // 默认一个 Settings 窗口
+    {"Attribute", true }
+};
+
+// 当前激活的窗口索引
+int activeWindowIndex = 0;
+
+
+    
+
+// 绘制窗口栏
+void DrawWindowBar();
+
+// 绘制主内容区域
+void DrawMainContent(std::vector<std::unique_ptr<Model>>& meshes);
+
+// 主菜单栏
+void DrawMenuBar();
+
 
 // time
 float delta_time = 0.0f;	// time between current frame and last frame
@@ -177,119 +238,150 @@ int main(int argc, char **argv) {
         ImGui::SetNextWindowSize(ImVec2(window_size.x, window_size.y), ImGuiCond_Always);
 
         
-        //ImGui::Begin("attribute", nullptr,ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoTitleBar);
-
-        //// 创建一个可拖动的子窗口
-        //ImVec2 childWindowSize = ImVec2(screen_size.x, screen_size.y * 0.8f);
-        //ImGui::BeginChild("VertexCounts", childWindowSize, true, ImGuiWindowFlags_AlwaysAutoResize);
-
-
-        //ImGui::Text("vertices: %d", meshes[current_index]->positions.size());
-        //ImGui::Text("faces: %d", meshes[current_index]->indices.size());
-        //ImGui::Text("borders: %s", shows_border ? "On" : "Off");
-
-        //static int counter = 0;
-        //static float f = 0.0f;
-
-        //if (ImGui::Button("Button"))                            // Buttons return true when clicked (most widgets return true when edited/activated)
-        //    counter++;
-        //ImGui::SameLine();
-        //ImGui::Text("counter = %d", counter);
-
-        //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        DrawResourceExplorer();
+        DrawWindowBar();    // 窗口栏
+        DrawMainContent(meshes);  // 主内容区域
+        // Set custom style colors for the menu bar
+        //SetupImGuiStyle();
+        // Start the menu bar
+        if (ImGui::BeginMainMenuBar())
+        {
 
 
-        //for (size_t i = 0; i < vertexCountIndices.size(); ++i) {
-        //    std::string buttonLabel = std::to_string(meshes[vertexCountIndices[i]]->positions.size());
-        //    if (ImGui::TreeNodeEx(buttonLabel.c_str(), ImGuiTreeNodeFlags_SpanAvailWidth)) {
-        //        // 当按钮被点击时，切换到相应顶点数的模型
-        //        current_index = i;
-        //        isButtonClicked = true;
-
-        //        // 在树节点展开时显示额外的信息
-        //    ImGui::Text("Additional Information:");
-        //    ImGui::Text("Vertices: %d", meshes[vertexCountIndices[i]]->positions.size());
-        //    ImGui::Text("Faces: %d", meshes[vertexCountIndices[i]]->indices.size());
-
-        //        ImGui::TreePop(); // 关闭树节点
-        //    }
-        //    // 检查鼠标是否在当前按钮上
-        //    if (ImGui::IsItemClicked(0)) {
-        //        isInsideVertexCountsWindow = true;
-        //        std::cout << buttonLabel.c_str() << " was clicked" << std::endl;
-        //        current_index = i;
-        //        isButtonClicked = true;
-        //    }
-        //    //std::cout << "current_index has been " << vertexCountIndices[i] << std::endl;
-        //    // 在每个 TreeNodeEx 之后添加 SameLine，实现横向排列
-        //    if (i < vertexCountIndices.size() - 1) {
-        //    ImGui::SameLine();
-        //    }
-        //}
-
-
-        //ImGui::EndChild(); // 结束子窗口    
-        //ImGui::End();
-
-        ImGui::Begin("topOption", nullptr,ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoCollapse|ImGuiWindowFlags_NoTitleBar);
-            ImGui::InvisibleButton("##Files", ImVec2(30, 30)); // 设置点击区域的大小为 30x30 像素
-            if (ImGui::TreeNodeEx("Files", ImGuiTreeNodeFlags_OpenOnArrow)) {
-
-            ImGui::Text("Show Files Options");
-
-                ImGui::TreePop(); // 关闭树节点
+            // File menu
+            if (ImGui::BeginMenu("File"))
+            {
+                if (DrawHoverBorder("New", "Ctrl+N"));
+                if (DrawHoverBorder("Open", "Ctrl+O"));
+                if (DrawHoverBorder("Save", "Ctrl+S"));
+                ImGui::Separator();
+                if (DrawHoverBorder("Exit", "Alt+F4")) {
+                    glfwSetWindowShouldClose(window, true); // 设置窗口应关闭
+                };
+                ImGui::EndMenu();
             }
-            ////实现横向排列
-            //ImGui::SameLine();
 
-            if (ImGui::TreeNodeEx("Editor", ImGuiTreeNodeFlags_OpenOnArrow)) {
-
-                ImGui::Text("Show Files Options");
-
-                ImGui::TreePop(); // 关闭树节点
+            // Edit menu
+            if (ImGui::BeginMenu("Edit"))
+            {
+                ImGui::MenuItem("Undo", "Ctrl+Z");
+                ImGui::MenuItem("Redo", "Ctrl+Y");
+                ImGui::Separator();
+                ImGui::MenuItem("Cut", "Ctrl+X");
+                ImGui::MenuItem("Copy", "Ctrl+C");
+                ImGui::MenuItem("Paste", "Ctrl+V");
+                ImGui::EndMenu();
             }
-            ////实现横向排列
-            //ImGui::SameLine();
 
-            if (ImGui::TreeNodeEx("View", ImGuiTreeNodeFlags_OpenOnArrow)) {
-
-                ImGui::Text("Show Files Options");
-
-                ImGui::TreePop(); // 关闭树节点
+            // View menu
+            if (ImGui::BeginMenu("View"))
+            {
+                if (ImGui::MenuItem("Resource Explorer", NULL, showResourceExplorer))
+                {
+                    // 点击菜单项时，切换资源管理器窗口的显示状态
+                    showResourceExplorer = !showResourceExplorer;
+                }
+                if (ImGui::MenuItem("Show Window Bar", NULL, showWindowBar)) {
+                    showWindowBar = !showWindowBar;
+                }
+                ImGui::MenuItem("Zoom In", "Ctrl++");
+                ImGui::MenuItem("Zoom Out", "Ctrl+-");
+                ImGui::MenuItem("Reset Zoom", "Ctrl+0");
+                ImGui::EndMenu();
             }
-            ////实现横向排列
-            //ImGui::SameLine();
 
-            if (ImGui::TreeNodeEx("Git", ImGuiTreeNodeFlags_OpenOnArrow)) {
-
-                ImGui::Text("Show Files Options");
-
-                ImGui::TreePop(); // 关闭树节点
+            // Git menu
+            if (ImGui::BeginMenu("Git"))
+            {
+                ImGui::MenuItem("Commit");
+                ImGui::MenuItem("Push");
+                ImGui::MenuItem("Pull");
+                ImGui::EndMenu();
             }
-            ////实现横向排列
-            //ImGui::SameLine();
 
-            if (ImGui::TreeNodeEx("Projects", ImGuiTreeNodeFlags_OpenOnArrow)) {
-
-                ImGui::Text("Show Files Options");
-
-                ImGui::TreePop(); // 关闭树节点
+            // Project menu
+            if (ImGui::BeginMenu("Project"))
+            {
+                ImGui::MenuItem("Add Files");
+                ImGui::MenuItem("Remove Files");
+                ImGui::MenuItem("Properties");
+                ImGui::EndMenu();
             }
-            ////实现横向排列
-            //ImGui::SameLine();
 
-            if (ImGui::TreeNodeEx("Build", ImGuiTreeNodeFlags_OpenOnArrow)) {
-
-                ImGui::Text("Show Files Options");
-
-                ImGui::TreePop(); // 关闭树节点
+            // Build menu
+            if (ImGui::BeginMenu("Build"))
+            {
+                ImGui::MenuItem("Build Solution", "F7");
+                ImGui::MenuItem("Rebuild Solution");
+                ImGui::MenuItem("Clean Solution");
+                ImGui::EndMenu();
             }
-            ////实现横向排列
-            //ImGui::SameLine();
 
+            // Debug menu
+            if (ImGui::BeginMenu("Debug"))
+            {
+                ImGui::MenuItem("Start Debugging", "F5");
+                ImGui::MenuItem("Step Into", "F11");
+                ImGui::MenuItem("Step Over", "F10");
+                ImGui::MenuItem("Stop Debugging", "Shift+F5");
+                ImGui::EndMenu();
+            }
 
-        ImGui::End();
+            // Test menu
+            if (ImGui::BeginMenu("Test"))
+            {
+                ImGui::MenuItem("Run Tests");
+                ImGui::MenuItem("Debug Tests");
+                ImGui::EndMenu();
+            }
 
+            // Analyze menu
+            if (ImGui::BeginMenu("Analyze"))
+            {
+                ImGui::MenuItem("Code Metrics");
+                ImGui::MenuItem("Run Profiler");
+                ImGui::EndMenu();
+            }
+
+            // Tools menu
+            if (ImGui::BeginMenu("Tools"))
+            {
+                ImGui::MenuItem("Options");
+                ImGui::MenuItem("Extensions");
+                ImGui::EndMenu();
+            }
+
+            // Extensions menu
+            if (ImGui::BeginMenu("Extensions"))
+            {
+                ImGui::MenuItem("Manage Extensions");
+                ImGui::MenuItem("Download Extensions");
+                ImGui::EndMenu();
+            }
+
+            // Window menu
+            if (ImGui::BeginMenu("Window"))
+            {
+
+                if (ImGui::MenuItem("New Window")) {
+                    // 添加一个新窗口
+                    static int newWindowCounter = 1;
+                    windows.push_back({ "New Window " + std::to_string(newWindowCounter++), true });
+                }
+                ImGui::MenuItem("Close Window");
+                ImGui::EndMenu();
+            }
+            // Help menu
+            if (ImGui::BeginMenu("Help"))
+            {
+                ImGui::MenuItem("View Help");
+                ImGui::MenuItem("About");
+                ImGui::EndMenu();
+            }
+
+            // End the menu bar
+            ImGui::EndMainMenuBar();
+        }
         glClearColor(ambient[0], ambient[1], ambient[2], 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glPolygonMode(GL_FRONT_AND_BACK ,GL_FILL);
@@ -345,6 +437,7 @@ void error_callback(int code, const char *description) {
 
 void process_input(GLFWwindow *window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        std::cout << "press esc" << std::endl;
         glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
         camera_movement_enabled = false;
     }
@@ -406,9 +499,21 @@ void process_input(GLFWwindow *window) {
          }
          is_right_pressing = false;
     }
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
+        //std::cout << "Left mouse button clicked!" << std::endl;
+        if (DetectMouseOutsideClick()) {
+            camera_movement_enabled = true;
+            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            //std::cout << "has set" << std::endl;
+            //std::cout << camera_movement_enabled << std::endl;
+        }
+    }
 }
 
 void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
+    std::cout << "into mouse_callback" << std::endl;
+    std::cout << camera_movement_enabled << std::endl;
+    ImGuiIO& io = ImGui::GetIO();
     if (init_mouse) {
         last_x = static_cast<float>(xpos);
         last_y = static_cast<float>(ypos);
@@ -424,8 +529,227 @@ void mouse_callback(GLFWwindow *window, double xpos, double ypos) {
     // base_angle_y += static_cast<float>(xoffset);
     // angle_x += static_cast<float>(yoffset);
     if(camera_movement_enabled)camera.process_mouse_movement(xoffset, yoffset);
+    
 }
 
 void scroll_callback(GLFWwindow *window, double xoffset, double yoffset) {
     if(camera_movement_enabled)camera.process_mouse_scroll(static_cast<float>(yoffset));
+}
+void SetupImGuiStyle()
+{
+    ImGuiStyle& style = ImGui::GetStyle();
+
+    // 去除窗口的边界 Padding
+    style.WindowPadding = ImVec2(0.0f, 0.0f); // 窗口内的上下左右填充设置为 0
+
+    // 去除菜单项内部的左右 Padding
+    style.FramePadding = ImVec2(0.0f, 4.0f); // 高度可根据需要调整，保持文本居中
+
+    // 调整 ItemSpacing（菜单项之间的间距）
+    style.ItemSpacing = ImVec2(0.0f, 0.0f); // 菜单项之间无间距
+
+    // 调整菜单栏的内边距
+    style.WindowBorderSize = 0.0f; // 去除窗口边框
+
+    style.IndentSpacing = 0.0f;    // 去除菜单层级缩进
+
+
+    // 设置菜单背景为黑色
+    style.Colors[ImGuiCol_PopupBg] = ImVec4(0.0f, 0.0f, 0.0f, 1.0f); // 黑色背景
+
+    // 设置菜单悬停时的颜色（例如浅灰色）
+    style.Colors[ImGuiCol_HeaderHovered] = ImVec4(0.3f, 0.3f, 0.3f, 1.0f);
+
+    // 设置菜单选中时的颜色（例如深灰色）
+    style.Colors[ImGuiCol_HeaderActive] = ImVec4(0.2f, 0.2f, 0.2f, 1.0f);
+
+    // 设置菜单项的文本颜色
+    style.Colors[ImGuiCol_Text] = ImVec4(0.9f, 0.9f, 0.9f, 1.0f); // 浅灰色文本
+
+    // 设置菜单边框颜色
+    style.Colors[ImGuiCol_Border] = ImVec4(0.5f, 0.5f, 0.5f, 1.0f);
+}
+
+
+  
+
+bool DrawHoverBorder(const char* label, const char* shortcut)
+{
+    // Render the menu item and check if it is hovered
+    bool hovered = ImGui::MenuItem(label, shortcut);
+
+    // If hovered, draw a border around the item
+    if (ImGui::IsItemHovered())
+    {
+        ImDrawList* drawList = ImGui::GetWindowDrawList();
+        ImVec2 min = ImGui::GetItemRectMin(); // Top-left of the item
+        ImVec2 max = ImGui::GetItemRectMax(); // Bottom-right of the item
+        ImU32 borderColor = ImColor(150, 150, 150, 255); // Light gray border color
+        float thickness = 5.0f; // Border thickness
+        drawList->AddRect(min, max, borderColor, 0.0f, ImDrawFlags_RoundCornersNone, thickness);
+    }
+    return hovered;
+}
+
+void DrawResourceExplorer()
+{
+    if (showResourceExplorer)
+    {
+        ImGui::Begin("Resource Explorer", &showResourceExplorer, ImGuiWindowFlags_HorizontalScrollbar);
+
+        // 显示当前路径
+        ImGui::Text("Current Path: %s", currentPath.c_str());
+        ImGui::Separator();
+
+        // 返回上一级按钮
+        if (ImGui::Button(".. (Up one level)"))
+        {
+            // 返回上一级目录
+            currentPath = fs::path(currentPath).parent_path().string();
+        }
+
+        ImGui::Separator();
+
+        // 显示当前目录的内容
+        DisplayDirectoryContents(currentPath);
+
+        ImGui::End();
+    }
+}
+void DisplayDirectoryContents(const std::string& path)
+{
+    for (const auto& entry : fs::directory_iterator(path))
+    {
+        if (entry.is_directory()) // 如果是文件夹
+        {
+            if (ImGui::TreeNode(entry.path().filename().string().c_str()))
+            {
+                // 递归显示子文件夹内容
+                DisplayDirectoryContents(entry.path().string());
+                ImGui::TreePop();
+            }
+        }
+        else if (entry.is_regular_file()) // 如果是文件
+        {
+            // 显示文件
+            if (ImGui::Selectable(entry.path().filename().string().c_str()))
+            {
+                // 如果点击文件，可以在这里处理点击逻辑，比如打印文件路径
+                printf("File clicked: %s\n", entry.path().string().c_str());
+            }
+        }
+    }
+}
+
+
+// 绘制窗口栏
+void DrawWindowBar() {
+    // 窗口栏
+    // 定义窗口栏的位置和大小
+    float menuBarHeight = ImGui::GetFrameHeight(); // 动态获取菜单栏高度
+    ImVec2 windowPos = ImVec2(0, menuBarHeight);   // 将窗口栏放在菜单栏下方
+    ImVec2 windowSize = ImVec2(ImGui::GetIO().DisplaySize.x, 50); // 宽度覆盖屏幕，固定高度为 30
+
+    // 设置窗口栏的位置和大小
+    ImGui::SetNextWindowPos(windowPos);
+    ImGui::SetNextWindowSize(windowSize);
+
+    // 设置窗口栏窗口的标志
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoTitleBar |  // 无标题栏
+        ImGuiWindowFlags_NoResize |    // 禁止调整大小
+        ImGuiWindowFlags_NoMove |      // 禁止移动
+        ImGuiWindowFlags_NoCollapse |  // 禁止折叠
+        ImGuiWindowFlags_NoSavedSettings; // 不保存设置
+
+    // 开始绘制窗口栏
+    if (ImGui::Begin("Window Bar", nullptr, windowFlags)) {
+        if (ImGui::BeginTabBar("WindowBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_AutoSelectNewTabs)) {
+            for (int i = 0; i < windows.size(); ++i) {
+                auto& window = windows[i];
+
+                // 如果窗口被关闭，跳过绘制
+                if (!window.isOpen) continue;
+
+                // 每个窗口作为一个 Tab
+                if (ImGui::BeginTabItem(window.name.c_str(), &window.isOpen)) {
+                    activeWindowIndex = i; // 设置当前激活的窗口索引
+                    ImGui::EndTabItem();
+                }
+            }
+
+            ImGui::EndTabBar();
+        }
+    }
+    ImGui::End(); // 结束窗口栏
+    // 移除被关闭的窗口
+    windows.erase(
+        std::remove_if(windows.begin(), windows.end(), [](const Window& window) {
+            return !window.isOpen;
+            }),
+        windows.end()
+    );
+}
+
+void DrawMainContent(std::vector<std::unique_ptr<Model>>& meshes) {
+    if (activeWindowIndex >= 0 && activeWindowIndex < windows.size()) {
+        ImGui::Begin(windows[activeWindowIndex].name.c_str(), nullptr, ImGuiWindowFlags_NoCollapse);
+        std::string windowName(windows[activeWindowIndex].name.c_str());
+        if (windowName == "Home") {
+            ImGui::Text("Welcome to the Home window!");
+        }
+        else if (windowName == "Settings") {
+            ImGui::Text("This is the Settings window.");
+        }
+        else if (windowName == "Attribute") {
+            
+
+
+            ImGui::Text("vertices: %d", meshes[current_index]->positions.size());
+            ImGui::Text("faces: %d", meshes[current_index]->indices.size());
+            ImGui::Text("borders: %s", shows_border ? "On" : "Off");
+
+            static int counter = 0;
+            static float f = 0.0f;
+
+            if (ImGui::Button("Button")) {
+                ImGui::SameLine();
+            }
+            ImGui::Text("counter = %d", counter);
+
+            //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+
+
+            for (size_t i = 0; i < vertexCountIndices.size(); ++i) {
+                std::string buttonLabel = std::to_string(meshes[vertexCountIndices[i]]->positions.size());
+                if (ImGui::TreeNodeEx(buttonLabel.c_str(), ImGuiTreeNodeFlags_SpanAvailWidth)) {
+                    // 当按钮被点击时，切换到相应顶点数的模型
+                    current_index = i;
+                    isButtonClicked = true;
+
+                    // 在树节点展开时显示额外的信息
+                    ImGui::Text("Additional Information:");
+                    ImGui::Text("Vertices: %d", meshes[vertexCountIndices[i]]->positions.size());
+                    ImGui::Text("Faces: %d", meshes[vertexCountIndices[i]]->indices.size());
+
+                    ImGui::TreePop(); // 关闭树节点
+                }
+                // 检查鼠标是否在当前按钮上
+                if (ImGui::IsItemClicked(0)) {
+                    isInsideVertexCountsWindow = true;
+                    std::cout << buttonLabel.c_str() << " was clicked" << std::endl;
+                    current_index = i;
+                    isButtonClicked = true;
+                }
+                //std::cout << "current_index has been " << vertexCountIndices[i] << std::endl;
+               
+            }
+
+
+   
+        }
+        else {
+            ImGui::Text("This is a dynamically created window: %s", windowName.c_str());
+        }
+        ImGui::End();
+    }
 }
