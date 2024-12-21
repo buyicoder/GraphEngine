@@ -8,9 +8,6 @@ bool showResourceExplorer = false;
 bool showWindowBar = false;
 std::string currentPath = std::filesystem::current_path().string();
 std::vector<Window> windows = {
-    {"Home", true},      // 默认一个 Home 窗口
-    {"Settings", true},  // 默认一个 Settings 窗口
-    {"Attribute", true}  // 默认一个 Attribute 窗口
 };
 int activeWindowIndex = 0;
 std::vector<int> activeWindowIndices;  // 用于保存所有激活窗口的索引

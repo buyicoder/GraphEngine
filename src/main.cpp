@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
     
     // load meshes
     load_meshes();
-
+    InitFiles();
     glEnable(GL_CULL_FACE);
 
     glEnable(GL_DEPTH_TEST);
@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
     while (!glfwWindowShouldClose(window)) {
         // record time
         RecordTime();
-
+        
         // while calculating the meshes and vertices, I recommend avoid processing input
         if (!is_changing) {
             process_input(window);

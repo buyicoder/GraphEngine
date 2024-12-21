@@ -24,6 +24,7 @@
 // 窗口管理相关
 struct Window {
     std::string name;
+    std::string filepath;
     bool isOpen;
 };
 

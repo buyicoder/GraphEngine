@@ -133,7 +133,10 @@ void DrawMainMenu() {
             if (ImGui::MenuItem("New Window")) {
                 // 添加一个新窗口
                 static int newWindowCounter = 1;
-                windows.push_back({ "New Window " + std::to_string(newWindowCounter++), true });
+                std::string name("New Window " + std::to_string(newWindowCounter++));
+                std::string path( "./Windows/" + std::string("New Window") + std::to_string(newWindowCounter++)+std::string(".txt"));
+                CreateFileInDirectory(path);
+                windows.push_back({name,path, true });
             }
             ImGui::MenuItem("Close Window");
             ImGui::EndMenu();
@@ -252,7 +255,7 @@ void DisplayDirectoryContents(const std::string& path)
             // 显示文件
             if (ImGui::Selectable(entry.path().filename().string().c_str()))
             {
-                windows.push_back({ entry.path().filename().string().c_str(), true });
+                windows.push_back({ entry.path().filename().string().c_str(),entry.path().string().c_str(), true });
             }
         }
     }
@@ -319,10 +322,11 @@ void DrawMainContent(std::vector<std::unique_ptr<Model>>& meshes) {
     for (int i = 0;i < activeWindowIndices.size();i++) {
         activeWindowIndex = activeWindowIndices[i];
         if (activeWindowIndex >= 0 && activeWindowIndex < windows.size()) {
-            ImGui::Begin(windows[activeWindowIndex].name.c_str(), nullptr, ImGuiWindowFlags_NoCollapse);
+            ImGui::Begin(windows[activeWindowIndex].name.c_str(), &windows[activeWindowIndex].isOpen, ImGuiWindowFlags_HorizontalScrollbar);
 
 
             std::string windowName(windows[activeWindowIndex].name.c_str());
+            std::string windowPath(windows[activeWindowIndex].filepath.c_str());
             if (windowName == "Home") {
                 ImGui::Text("Welcome to the Home window!");
             }
@@ -346,8 +350,6 @@ void DrawMainContent(std::vector<std::unique_ptr<Model>>& meshes) {
                 ImGui::Text("counter = %d", counter);
 
                 //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
-
-
                 for (size_t i = 0; i < vertexCountIndices.size(); ++i) {
                     std::string buttonLabel = std::to_string(meshes[vertexCountIndices[i]]->positions.size());
                     if (ImGui::TreeNodeEx(buttonLabel.c_str(), ImGuiTreeNodeFlags_SpanAvailWidth)) {
@@ -368,14 +370,10 @@ void DrawMainContent(std::vector<std::unique_ptr<Model>>& meshes) {
                         current_index = i;
                     }
                     //std::cout << "current_index has been " << vertexCountIndices[i] << std::endl;
-
                 }
-
-
-
             }
             else {
-                ImGui::Text("This is a dynamically created window: %s", windowName.c_str());
+                DisplayFileContents(windowPath);
             }
             // 获取当前窗口的大小和位置
             ImVec2 windowPos = ImGui::GetWindowPos();
@@ -388,12 +386,34 @@ void DrawMainContent(std::vector<std::unique_ptr<Model>>& meshes) {
             ImGui::SetItemAllowOverlap();
             ImGui::SetCursorPos(ImVec2(10, windowSize.y + 10));
 
-            // 创建一个“关闭”按钮，放在窗口的左下角
-            if (ImGui::Button("EXIT", ImVec2(closeButtonSize.x, closeButtonSize.y)))
-            {
-                windows[activeWindowIndex].isOpen = false;  // 关闭窗口
-            }
             ImGui::End();
         }
     }
+}
+void DisplayFileContents(const std::string& filepath)
+{
+    std::ifstream file(filepath);
+    if (!file.is_open())
+    {
+        ImGui::Text("Failed to open file: %s", filepath.c_str());
+        return;
+    }
+
+    std::stringstream buffer;
+    buffer << file.rdbuf();
+    std::string fileContents = buffer.str();
+
+    // 动态分配缓冲区
+    static char* cbuffer = new char[1024 * 1024];
+    strcpy(cbuffer, fileContents.c_str()); // 将 std::string 的内容复制到缓冲区中
+    ImVec2 availableSize = ImGui::GetContentRegionAvail();
+    // 使用 InputTextMultiline 显示内容
+    ImGui::InputTextMultiline("##filecontents", cbuffer, 1024*1024,availableSize);
+    std::string fileContentsChanged(cbuffer);
+    if (ImGui::IsKeyDown(ImGuiKey_LeftCtrl) && ImGui::IsKeyPressed(ImGuiKey_S))
+    {
+        SaveToFile(filepath, fileContentsChanged); // 保存文件
+    }
+
+    file.close();
 }
