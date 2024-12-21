@@ -50,6 +50,7 @@ void DrawMainMenu() {
             if (ImGui::MenuItem("Show Window Bar", NULL, showWindowBar)) {
                 showWindowBar = !showWindowBar;
             }
+            ImGui::MenuItem("resource");
             ImGui::MenuItem("Zoom In", "Ctrl++");
             ImGui::MenuItem("Zoom Out", "Ctrl+-");
             ImGui::MenuItem("Reset Zoom", "Ctrl+0");
@@ -140,7 +141,10 @@ void DrawMainMenu() {
         // Help menu
         if (ImGui::BeginMenu("Help"))
         {
-            ImGui::MenuItem("View Help");
+            if (ImGui::MenuItem("View Help"))
+            {
+                windows.push_back({ "Help " , true });
+           }
             ImGui::MenuItem("About");
             ImGui::EndMenu();
         }
