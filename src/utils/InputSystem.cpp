@@ -26,28 +26,27 @@ void error_callback(int code, const char* description) {
 
 void process_input(GLFWwindow* window) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
-        std::cout << "press esc" << std::endl;
-        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-        camera_movement_enabled = false;
+        //std::cout << "press esc" << std::endl;
+        InterMode = GLOBALEDIT;
     }
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        camera.process_keyboard(Camera::Movement::FORWARD, delta_time);
+        if (camera_movement_enabled)camera.process_keyboard(Camera::Movement::FORWARD, delta_time);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        camera.process_keyboard(Camera::Movement::BACKWARD, delta_time);
+        if (camera_movement_enabled)camera.process_keyboard(Camera::Movement::BACKWARD, delta_time);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        camera.process_keyboard(Camera::Movement::LEFT, delta_time);
+        if (camera_movement_enabled)camera.process_keyboard(Camera::Movement::LEFT, delta_time);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        camera.process_keyboard(Camera::Movement::RIGHT, delta_time);
+        if (camera_movement_enabled)camera.process_keyboard(Camera::Movement::RIGHT, delta_time);
     }
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-        camera.process_keyboard(Camera::Movement::UP, delta_time);
+        if (camera_movement_enabled)camera.process_keyboard(Camera::Movement::UP, delta_time);
     }
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-        camera.process_keyboard(Camera::Movement::DOWN, delta_time);
+        if (camera_movement_enabled)camera.process_keyboard(Camera::Movement::DOWN, delta_time);
     }
 
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
@@ -92,8 +91,7 @@ void process_input(GLFWwindow* window) {
     if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_LEFT) == GLFW_PRESS) {
         //std::cout << "Left mouse button clicked!" << std::endl;
         if (DetectMouseOutsideClick()) {
-            camera_movement_enabled = true;
-            glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+            InterMode = SCENEEXCURISION;
             //std::cout << "has set" << std::endl;
             //std::cout << camera_movement_enabled << std::endl;
         }

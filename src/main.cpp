@@ -22,6 +22,7 @@
 #include "utils/InputSystem.h"
 #include "utils/CameraSystem.h"
 #include "utils/InteractSystem.h"
+#include "utils/InterModeSystem.h"
 
 using Utils::Camera;
 using Utils::Shader;
@@ -94,6 +95,7 @@ int main(int argc, char **argv) {
         // record time
         RecordTime();
         
+        SetInterMode();
         // while calculating the meshes and vertices, I recommend avoid processing input
         if (!is_changing) {
             process_input(window);

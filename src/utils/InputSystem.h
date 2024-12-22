@@ -21,6 +21,7 @@
 #include "utils/GraphicsSystem.h"
 #include "utils/CameraSystem.h"
 #include "utils/TimeSystem.h"
+#include "utils/InterModeSystem.h"
 using Utils::Camera;
 using Utils::Shader;
 using Utils::Model;
