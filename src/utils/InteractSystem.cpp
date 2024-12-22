@@ -146,7 +146,7 @@ void DrawMainMenu() {
         {
             if (ImGui::MenuItem("View Help"))
             {
-                windows.push_back({ "Help " , true });
+                windows.push_back({ "Help " ,"", true });
            }
             ImGui::MenuItem("About");
             ImGui::EndMenu();
