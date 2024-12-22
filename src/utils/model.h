@@ -33,7 +33,7 @@ struct Model {
     std::vector<vecf3> positions;
     std::vector<vecf3> normals;
     std::vector<veci3> indices;
-    
+
     static Model *load(const std::string& path);
     // from mesh
     static Model *load(std::vector<vecf3>&& positions, std::vector<veci3>&& indices);

@@ -19,7 +19,8 @@
 #include "mesh_simplification.h"
 #include "utils/WindowSystem.h"
 #include <vector>
-
+#include <utils/CameraSystem.h>
+using Utils::Shader;
 // 变量声明和 getter 函数声明
 extern std::vector<int> vertexCountIndices;
 extern std::vector<std::unique_ptr<Model>> meshes;
@@ -38,3 +39,4 @@ bool* getShowsBorder();
 bool* getIsInsideVertexCountsWindow();
 bool* getIsButtonClicked();
 void load_meshes();
+void DrawModel(Shader shader, Shader border_shader);
