@@ -67,6 +67,7 @@ void SaveToFile(const std::string& filePath, const std::string& content)
         std::cerr << "Failed to save file: " << filePath << std::endl;
     }
 }
+
 void InitFiles() {
     CreateDirectory("./Windows");
 }

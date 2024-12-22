@@ -5,6 +5,7 @@
 // 初始化全局变量
 GLFWwindow* window=nullptr;
 bool showResourceExplorer = false;
+bool showCreateNewProjectWindow = false;
 bool showWindowBar = false;
 std::string currentPath = std::filesystem::current_path().string();
 std::vector<Window> windows = {
@@ -12,30 +13,6 @@ std::vector<Window> windows = {
 int activeWindowIndex = 0;
 std::vector<int> activeWindowIndices;  // 用于保存所有激活窗口的索引
 
-// Getter 函数定义
-bool getShowResourceExplorer() {
-    return showResourceExplorer;
-}
-
-bool getShowWindowBar() {
-    return showWindowBar;
-}
-
-std::string getCurrentPath() {
-    return currentPath;
-}
-
-std::vector<Window>& getWindows() {
-    return windows;
-}
-
-int getActiveWindowIndex() {
-    return activeWindowIndex;
-}
-
-std::vector<int>& getActiveWindowIndices() {
-    return activeWindowIndices;
-}
 
 
 void set_window() {

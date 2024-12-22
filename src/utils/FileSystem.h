@@ -22,3 +22,4 @@ void CreateDirectory(const std::string& path);
 void CreateFileInDirectory(const std::string& filepath);
 void SaveToFile(const std::string& filePath, const std::string& content);
 void InitFiles();
+

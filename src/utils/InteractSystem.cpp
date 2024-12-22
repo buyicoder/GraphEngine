@@ -5,6 +5,7 @@ void DrawEditor() {
     ImGui::GetIO().FontGlobalScale = 2.0f; // 这里将字体放大 1.5 倍，你可以根据需要调整这个值
     DrawMainMenu();
     DrawResourceExplorer();
+    DrawCreateNewProjectWindow();
     DrawWindowBar();    // 窗口栏
     DrawMainContent(getMeshes());  // 主内容区域
 }
@@ -17,7 +18,8 @@ void DrawMainMenu() {
         // File menu
         if (ImGui::BeginMenu("File"))
         {
-            if (DrawHoverBorder("New", "Ctrl+N"));
+            if (DrawHoverBorder("New", "Ctrl+N")) {
+            };
             if (DrawHoverBorder("Open", "Ctrl+O"));
             if (DrawHoverBorder("Save", "Ctrl+S"));
             ImGui::Separator();
@@ -42,7 +44,7 @@ void DrawMainMenu() {
         // View menu
         if (ImGui::BeginMenu("View"))
         {
-            if (ImGui::MenuItem("Resource Explorer", NULL, getShowResourceExplorer()))
+            if (ImGui::MenuItem("Resource Explorer", NULL, &showResourceExplorer))
             {
                 // 点击菜单项时，切换资源管理器窗口的显示状态
                 showResourceExplorer = !showResourceExplorer;
@@ -69,7 +71,9 @@ void DrawMainMenu() {
         // Project menu
         if (ImGui::BeginMenu("Project"))
         {
-            ImGui::MenuItem("Add Files");
+            if (ImGui::MenuItem("New Project")) {
+                showCreateNewProjectWindow = true;
+            };
             ImGui::MenuItem("Remove Files");
             ImGui::MenuItem("Properties");
             ImGui::EndMenu();
@@ -133,7 +137,7 @@ void DrawMainMenu() {
             if (ImGui::MenuItem("New Window")) {
                 // 添加一个新窗口
                 static int newWindowCounter = 1;
-                std::string name("New Window " + std::to_string(newWindowCounter++));
+                std::string name("New Window " + std::to_string(newWindowCounter));
                 std::string path( "./Windows/" + std::string("New Window") + std::to_string(newWindowCounter++)+std::string(".txt"));
                 CreateFileInDirectory(path);
                 windows.push_back({name,path, true });
@@ -236,6 +240,42 @@ void DrawResourceExplorer()
         DisplayDirectoryContents(currentPath);
 
         ImGui::End();
+    }
+}
+void DrawCreateNewProjectWindow() {
+    if (showCreateNewProjectWindow) {
+        static char projectName[128] = "";  // 存储项目名称
+
+        // 创建新项目窗口
+        ImGui::Begin("New Project");
+
+        // 输入项目名称
+        ImGui::InputText("Project Name", projectName, IM_ARRAYSIZE(projectName));
+
+        // 创建文件夹按钮
+        if (ImGui::Button("Create")) {
+            showCreateNewProjectWindow = false;
+            if (strlen(projectName) > 0) {
+                std::filesystem::path projectPath(projectName);
+                if (!std::filesystem::exists(projectPath)) {
+                    // 创建新文件夹
+                    std::filesystem::create_directory(projectPath);
+                    std::cout << "成功创建项目文件夹: " << projectPath.string() << std::endl;
+                }
+                else {
+                    std::cout << "文件夹已经存在: " << projectPath.string() << std::endl;
+                }
+            }
+            else {
+                std::cout << "请输入有效的项目名称!" << std::endl;
+            }
+        }
+        if (ImGui::Button("Cancel")) {
+            showCreateNewProjectWindow = false;
+        }
+
+        ImGui::End();
+        
     }
 }
 void DisplayDirectoryContents(const std::string& path)
