@@ -23,6 +23,7 @@
 #include "utils/CameraSystem.h"
 #include "utils/InteractSystem.h"
 #include "utils/InterModeSystem.h"
+#include "utils/LightSystem.h"
 
 using Utils::Camera;
 using Utils::Shader;
@@ -69,9 +70,7 @@ int main(int argc, char **argv) {
     Shader shader(SHADER_DIR"/p3n3.vert", SHADER_DIR"/light.frag");
     Shader border_shader(SHADER_DIR"/p3n3.vert", SHADER_DIR"/border.frag");
 
-    vecf3 ambient(0.2f, 0.2f, 0.2f);
-    vecf3 point_light_pos(0.0f, 10.0f, 0.0f);
-    vecf3 point_light_radiance(255.0f, 255.0f, 255.0f);
+
 
     shader.set_vecf3("point_light_pos", point_light_pos);
     shader.set_vecf3("point_light_radiance", point_light_radiance);
