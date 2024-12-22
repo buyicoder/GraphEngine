@@ -136,11 +136,19 @@ void DrawMainMenu() {
 
             if (ImGui::MenuItem("New Window")) {
                 // 添加一个新窗口
+                
                 static int newWindowCounter = 1;
                 std::string name("New Window " + std::to_string(newWindowCounter));
                 std::string path( "./Windows/" + std::string("New Window") + std::to_string(newWindowCounter++)+std::string(".txt"));
                 CreateFileInDirectory(path);
                 windows.push_back({name,path, true });
+                // 设置下一个窗口的大小
+                ImGui::SetNextWindowSize(ImVec2(500, 360)); // 这里设置窗口的宽度和高度
+                // 显示窗口
+                if (ImGui::Begin(name.c_str(), &windows.back().isOpen)) { // windows.back().second 控制窗口的显示状态
+                    // 在这里添加窗口的内容
+                }
+                ImGui::End(); // 结束窗口
             }
             ImGui::MenuItem("Close Window");
             ImGui::EndMenu();
