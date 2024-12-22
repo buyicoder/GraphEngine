@@ -250,29 +250,117 @@ void DrawCreateNewProjectWindow() {
         ImGui::Begin("New Project");
 
         // 输入项目名称
-        ImGui::InputText("Project Name", projectName, IM_ARRAYSIZE(projectName));
+        ImGui::BeginGroup(); // 开始分组
+        ImGui::Text("Project Name:"); // 显示标签
+        ImGui::SameLine(); // 保持在同一行
 
+        // 设置初始边框宽度
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameBorderSize, 2.0f);
+        ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(255, 123, 142, 255));
+        // 绘制输入框
+        if (ImGui::InputText("##project_name", projectName, IM_ARRAYSIZE(projectName)))
+        {
+            
+        }
+        ImGui::PopStyleColor();
+        ImGui::PopStyleVar(); // 弹出以恢复边框宽度
+
+        ImGui::EndGroup(); // 结束分组
+        ImGui::Separator();
+        // 计算按钮的垂直位置和宽度
+        float buttonHeight = ImGui::GetFrameHeight(); // 获取按钮的标准高度
+        float paddingFromBottom = 30; // 底部间距
+        float windowWidth = ImGui::GetWindowWidth(); // 获取窗口宽度
+
+        // 将光标移动到底部，留出一定的间距
+        ImGui::SetCursorPosY(ImGui::GetWindowHeight() - paddingFromBottom - buttonHeight);
+
+        ImGui::Separator();
         // 创建文件夹按钮
-        if (ImGui::Button("Create")) {
-            showCreateNewProjectWindow = false;
+        if (ImGui::Button("Create",ImVec2(200, 40))) {
+            //showCreateNewProjectWindow = false;
             if (strlen(projectName) > 0) {
                 std::filesystem::path projectPath(projectName);
                 if (!std::filesystem::exists(projectPath)) {
                     // 创建新文件夹
                     std::filesystem::create_directory(projectPath);
-                    std::cout << "成功创建项目文件夹: " << projectPath.string() << std::endl;
+                    ImGui::OpenPopup("Create Project Success");
                 }
                 else {
-                    std::cout << "文件夹已经存在: " << projectPath.string() << std::endl;
+                    ImGui::OpenPopup("Folder Exists");
                 }
             }
             else {
-                std::cout << "请输入有效的项目名称!" << std::endl;
+                ImGui::OpenPopup("Input Required");
             }
         }
-        if (ImGui::Button("Cancel")) {
+
+        // 显示弹窗
+        // 设置弹窗大小为 300x200
+        // 设置弹窗大小
+        ImGui::SetNextWindowSize(ImVec2(300, 160));
+
+        // 显示弹窗
+        if (ImGui::BeginPopupModal("Create Project Success", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+            // 显示文本
+            ImGui::Text("yeah!success!!");
+
+            // 分隔线
+            ImGui::Separator();
+
+            // 创建一个空白区域，将按钮推到底部
+            ImGui::SetCursorPos(ImVec2(0, ImGui::GetCursorPos().y + 3)); // 向下移动光标
+            ImGui::Dummy(ImVec2(0, 40)); // 创建一个高度为30的空白区域
+
+            // 设置按钮位置
+            ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 130); // 将光标移动到窗口右侧，留出按钮宽度和一些边距
+            if (ImGui::Button("OK", ImVec2(120, 0))) {
+                ImGui::CloseCurrentPopup();
+                showCreateNewProjectWindow = false;
+            }
+
+            ImGui::EndPopup();
+        }
+        ImGui::SetNextWindowSize(ImVec2(300, 160));
+        if (ImGui::BeginPopupModal("Folder Exists", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+            ImGui::Text("already existed!!");
+            ImGui::Separator();
+            // 创建一个空白区域，将按钮推到底部
+            ImGui::SetCursorPos(ImVec2(0, ImGui::GetCursorPos().y + 5)); // 向下移动光标
+            ImGui::Dummy(ImVec2(0, 40)); // 创建一个高度为30的空白区域
+
+            // 设置按钮位置
+            ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 130); // 将光标移动到窗口右侧，留出按钮宽度和一些边距
+            if (ImGui::Button("OK", ImVec2(120, 0))) {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+        ImGui::SetNextWindowSize(ImVec2(300, 160));
+        if (ImGui::BeginPopupModal("Input Required", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
+            ImGui::Text("we need a valid name!!");
+            ImGui::Separator();
+            // 创建一个空白区域，将按钮推到底部
+            ImGui::SetCursorPos(ImVec2(0, ImGui::GetCursorPos().y + 5)); // 向下移动光标
+            ImGui::Dummy(ImVec2(0, 40)); // 创建一个高度为30的空白区域
+
+            // 设置按钮位置
+            ImGui::SetCursorPosX(ImGui::GetWindowWidth() - 130); // 将光标移动到窗口右侧，留出按钮宽度和一些边距
+            if (ImGui::Button("OK", ImVec2(120, 0))) {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+       
+        ImGui::SameLine(); // 并排排列按钮
+        ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(255, 100, 0, 255)); // 设置按钮背景为红色
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(200, 0, 0, 255)); // 设置按钮悬停时的背景为暗红色
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(180, 0, 0, 255)); // 设置按钮按下时的背景为更暗的红色
+        if (ImGui::Button("Cancel", ImVec2(200, 40))) {
             showCreateNewProjectWindow = false;
         }
+        ImGui::PopStyleColor(3); // 弹出三次以恢复按钮颜色
+        
 
         ImGui::End();
         
