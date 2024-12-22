@@ -32,18 +32,11 @@ struct Window {
 extern GLFWwindow* window;
 extern bool showResourceExplorer;
 extern bool showWindowBar;
+extern bool showCreateNewProjectWindow ;
 extern std::string currentPath;
 extern std::vector<Window> windows;
 extern int activeWindowIndex;
 extern std::vector<int> activeWindowIndices;
-
-// Getter 函数声明
-bool getShowResourceExplorer();
-bool getShowWindowBar();
-std::string getCurrentPath();
-std::vector<Window>& getWindows();
-int getActiveWindowIndex();
-std::vector<int>& getActiveWindowIndices();
 
 void set_window();
 // 绘制窗口栏

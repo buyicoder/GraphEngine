@@ -43,6 +43,7 @@ void DrawMenuBar();
 bool DrawHoverBorder(const char* label, const char* shortcut = nullptr);
 void SetupImGuiStyle();
 void DrawResourceExplorer();
+void DrawCreateNewProjectWindow();
 void DisplayDirectoryContents(const std::string& path);
 void DrawMainMenu();
 void DrawEditor();
