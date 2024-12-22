@@ -28,4 +28,4 @@ enum InterMode {
 	GLOBALEDIT,//全局编辑模式
 	TEXTEDIT//文字编辑模式
 };
-void SetInterMode(int InterMode);
+void SetInterMode();
