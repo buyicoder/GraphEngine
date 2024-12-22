@@ -40,7 +40,7 @@ add_executable(${PROJECT_NAME}
     ${PRJ_SRC}
     ${IMGUI_SRC} 
     ${GLAD_SRC}
- "src/utils/WindowSystem.cpp" "src/utils/ModelSystem.h" "src/utils/ModelSystem.cpp"  "src/utils/GraphicsSystem.cpp" "src/utils/InputSystem.h" "src/utils/InputSystem.cpp" "src/utils/GraphicsSystem.h" "src/utils/CameraSystem.h" "src/utils/CameraSystem.cpp" "src/utils/TimeSystem.h" "src/utils/TimeSystem.cpp" "src/utils/InteractSystem.h" "src/utils/InteractSystem.cpp"   "src/utils/FileSystem.h" "src/utils/FileSystem.cpp" "src/utils/InterModeSystem.h" "src/utils/InterModeSystem.cpp" "src/utils/LightSystem.h" "src/utils/LightSystem.cpp")
+ "src/utils/WindowSystem.cpp" "src/utils/ModelSystem.h" "src/utils/ModelSystem.cpp"  "src/utils/GraphicsSystem.cpp" "src/utils/InputSystem.h" "src/utils/InputSystem.cpp" "src/utils/GraphicsSystem.h" "src/utils/CameraSystem.h" "src/utils/CameraSystem.cpp" "src/utils/TimeSystem.h" "src/utils/TimeSystem.cpp" "src/utils/InteractSystem.h" "src/utils/InteractSystem.cpp"   "src/utils/FileSystem.h" "src/utils/FileSystem.cpp" "src/utils/InterModeSystem.h" "src/utils/InterModeSystem.cpp" "src/utils/LightSystem.h" "src/utils/LightSystem.cpp"  "src/utils/GridSystem.h" "src/utils/GridSystem.cpp")
 target_link_libraries(${PROJECT_NAME} 
     ${GLFW_LIB}
 )
@@ -51,5 +51,6 @@ target_include_directories(${PROJECT_NAME}
     ${IMGUI_DIR}
     ${EIGEN}
     ${EIGEN_UNS}
+    ${DEPS}
 )
 
