@@ -6,7 +6,6 @@ out/
 .idea
 CMakeSettings.json
 
-*/deps/
 
 *.o
 *.a
