@@ -100,7 +100,7 @@ void process_input(GLFWwindow* window) {
 
 void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
     //std::cout << "into mouse_callback" << std::endl;
-    std::cout << camera_movement_enabled << std::endl;
+    //std::cout << camera_movement_enabled << std::endl;
     ImGuiIO& io = ImGui::GetIO();
     if (init_mouse) {
         last_x = static_cast<float>(xpos);
@@ -131,7 +131,7 @@ bool DetectMouseOutsideClick() {
         return true;
     }
     else {
-        std::cout << ImGui::IsMouseClicked(0) << " " << !io.WantCaptureMouse << std::endl;
+        //std::cout << ImGui::IsMouseClicked(0) << " " << !io.WantCaptureMouse << std::endl;
         //std::cout << "Mouse clicked inside an ImGui window." << std::endl;
         return false;
     }

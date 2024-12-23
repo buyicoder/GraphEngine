@@ -230,7 +230,7 @@ void DrawResourceExplorer()
 {
     if (showResourceExplorer)
     {
-        std::cout << showResourceExplorer << std::endl;
+        //std::cout << showResourceExplorer << std::endl;
         ImGui::Begin("Resource Explorer", &showResourceExplorer, ImGuiWindowFlags_HorizontalScrollbar);
 
         // 显示当前路径
