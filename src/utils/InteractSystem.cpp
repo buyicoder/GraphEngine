@@ -393,7 +393,15 @@ void DisplayDirectoryContents(const std::string& path)
             // 显示文件
             if (ImGui::Selectable(entry.path().filename().string().c_str()))
             {
-                windows.push_back({ entry.path().filename().string().c_str(),entry.path().string().c_str(), true });
+                auto it = std::find_if(windows.begin(), windows.end(), [&](const auto& window) {
+                    return window.filepath == entry.path().string(); // 匹配文件路径
+                    });
+
+                // 如果文件不存在，则添加到 windows 中
+                if (it == windows.end())
+                {
+                        windows.push_back({ entry.path().filename().string(), entry.path().string(), true });
+                }
             }
         }
     }
