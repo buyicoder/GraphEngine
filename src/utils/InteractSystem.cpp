@@ -145,7 +145,7 @@ void DrawMainMenu() {
                 // 设置下一个窗口的大小
                 ImGui::SetNextWindowSize(ImVec2(500, 360)); // 这里设置窗口的宽度和高度
                 // 显示窗口
-                if (ImGui::Begin(name.c_str(), &windows.back().isOpen)) { // windows.back().second 控制窗口的显示状态
+                if (ImGui::Begin(name.c_str(), &windows.back().isOpen)) { 
                     // 在这里添加窗口的内容
                 }
                 ImGui::End(); // 结束窗口
