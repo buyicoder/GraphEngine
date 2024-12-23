@@ -3,7 +3,7 @@
 // 变量定义
 std::vector<int> vertexCountIndices;
 std::vector<std::unique_ptr<Model>> meshes;
-vecf3 pos = {0.0f,0.0f,0.0f};
+vecf3 pos = {-2.5f,0.0f,0.0f};
 int current_index = 0;
 float simplification_ratio = 0.99f;
 bool shows_border = false;
@@ -43,7 +43,12 @@ bool* getIsButtonClicked() {
 
 //加载网格体
 void load_meshes() {
-	meshes.emplace_back(Model::load(RESOURCES_DIR"/squirrel.obj"));
+	//meshes.emplace_back(Model::load(RESOURCES_DIR"/squirrel.obj"));
+    std::cout << "songshu1" << std::endl;
+    pos = { 2.5f,0.0f,0.0f };
+    meshes.emplace_back(Model::load(RESOURCES_DIR"/tuzi.obj"));
+    std::cout << "songshu2" << std::endl;
+
 	vertexCountIndices.push_back(0);
 }
 

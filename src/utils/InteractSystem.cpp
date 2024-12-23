@@ -219,7 +219,7 @@ bool DrawHoverBorder(const char* label, const char* shortcut)
         ImDrawList* drawList = ImGui::GetWindowDrawList();
         ImVec2 min = ImGui::GetItemRectMin(); // Top-left of the item
         ImVec2 max = ImGui::GetItemRectMax(); // Bottom-right of the item
-        ImU32 borderColor = ImColor(150, 150, 150, 255); // Light gray border color
+        ImU32 borderColor = ImColor(0, 0, 0, 255); // Light gray border color
         float thickness = 5.0f; // Border thickness
         drawList->AddRect(min, max, borderColor, 0.0f, ImDrawFlags_RoundCornersNone, thickness);
     }
