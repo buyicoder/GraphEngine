@@ -46,7 +46,7 @@ void load_meshes() {
 	//meshes.emplace_back(Model::load(RESOURCES_DIR"/squirrel.obj"));
     std::cout << "songshu1" << std::endl;
     pos = { 2.5f,0.0f,0.0f };
-    meshes.emplace_back(Model::load(RESOURCES_DIR"/spot_triangulated_good.obj"));
+    meshes.emplace_back(Model::load(RESOURCES_DIR"/tuzi.obj"));
     std::cout << "songshu2" << std::endl;
 
 	vertexCountIndices.push_back(0);
