@@ -4,9 +4,9 @@
 
 // 初始化全局变量
 GLFWwindow* window=nullptr;
-bool showResourceExplorer = false;
+bool showResourceExplorer = true;
 bool showCreateNewProjectWindow = false;
-bool showWindowBar = false;
+bool showWindowBar = true;
 std::string currentPath = std::filesystem::current_path().string();
 std::vector<Window> windows = {
 };

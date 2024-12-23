@@ -47,10 +47,11 @@ void DrawMainMenu() {
             if (ImGui::MenuItem("Resource Explorer", NULL, &showResourceExplorer))
             {
                 // 点击菜单项时，切换资源管理器窗口的显示状态
-                showResourceExplorer = !showResourceExplorer;
+                std::cout << "showResourceExplorer" << std::endl;
+                /*showResourceExplorer = !showResourceExplorer;*/
             }
-            if (ImGui::MenuItem("Show Window Bar", NULL, showWindowBar)) {
-                showWindowBar = !showWindowBar;
+            if (ImGui::MenuItem("Show Window Bar", NULL, &showWindowBar)) {
+                //showWindowBar = !showWindowBar;//
             }
             ImGui::MenuItem("resource");
             ImGui::MenuItem("Zoom In", "Ctrl++");
@@ -229,6 +230,7 @@ void DrawResourceExplorer()
 {
     if (showResourceExplorer)
     {
+        std::cout << showResourceExplorer << std::endl;
         ImGui::Begin("Resource Explorer", &showResourceExplorer, ImGuiWindowFlags_HorizontalScrollbar);
 
         // 显示当前路径
@@ -400,58 +402,60 @@ void DisplayDirectoryContents(const std::string& path)
 
 // 绘制窗口栏
 void DrawWindowBar() {
-    // 窗口栏
-    // 定义窗口栏的位置和大小
-    float menuBarHeight = ImGui::GetFrameHeight(); // 动态获取菜单栏高度
-    ImVec2 windowPos = ImVec2(0, menuBarHeight);   // 将窗口栏放在菜单栏下方
-    ImVec2 windowSize = ImVec2(ImGui::GetIO().DisplaySize.x, 50); // 宽度覆盖屏幕，固定高度为 30
+    if (showWindowBar) {
+        // 窗口栏
+        // 定义窗口栏的位置和大小
+        float menuBarHeight = ImGui::GetFrameHeight(); // 动态获取菜单栏高度
+        ImVec2 windowPos = ImVec2(0, menuBarHeight);   // 将窗口栏放在菜单栏下方
+        ImVec2 windowSize = ImVec2(ImGui::GetIO().DisplaySize.x, 50); // 宽度覆盖屏幕，固定高度为 30
 
-    // 设置窗口栏的位置和大小
-    ImGui::SetNextWindowPos(windowPos);
-    ImGui::SetNextWindowSize(windowSize);
+        // 设置窗口栏的位置和大小
+        ImGui::SetNextWindowPos(windowPos);
+        ImGui::SetNextWindowSize(windowSize);
 
-    // 设置窗口栏窗口的标志
-    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoTitleBar |  // 无标题栏
-        ImGuiWindowFlags_NoResize |    // 禁止调整大小
-        ImGuiWindowFlags_NoMove |      // 禁止移动
-        ImGuiWindowFlags_NoCollapse |  // 禁止折叠
-        ImGuiWindowFlags_NoSavedSettings; // 不保存设置
+        // 设置窗口栏窗口的标志
+        ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoTitleBar |  // 无标题栏
+            ImGuiWindowFlags_NoResize |    // 禁止调整大小
+            ImGuiWindowFlags_NoMove |      // 禁止移动
+            ImGuiWindowFlags_NoCollapse |  // 禁止折叠
+            ImGuiWindowFlags_NoSavedSettings; // 不保存设置
 
-    // 开始绘制窗口栏
-    if (ImGui::Begin("Window Bar", nullptr, windowFlags)) {
-        if (ImGui::BeginTabBar("WindowBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_AutoSelectNewTabs)) {
-            for (int i = 0; i < windows.size(); ++i) {
-                auto& window = windows[i];
+        // 开始绘制窗口栏
+        if (ImGui::Begin("Window Bar", nullptr, windowFlags)) {
+            if (ImGui::BeginTabBar("WindowBar", ImGuiTabBarFlags_Reorderable | ImGuiTabBarFlags_AutoSelectNewTabs)) {
+                for (int i = 0; i < windows.size(); ++i) {
+                    auto& window = windows[i];
 
-                // 如果窗口被关闭，跳过绘制
-                if (!window.isOpen) continue;
+                    // 如果窗口被关闭，跳过绘制
+                    if (!window.isOpen) continue;
 
-                auto it = std::find(activeWindowIndices.begin(), activeWindowIndices.end(), i);
-                bool isActive =  it!= activeWindowIndices.end();
+                    auto it = std::find(activeWindowIndices.begin(), activeWindowIndices.end(), i);
+                    bool isActive = it != activeWindowIndices.end();
 
-                if (ImGui::BeginTabItem(window.name.c_str(), &window.isOpen)) {
-                    // 激活或取消激活该窗口
-                    if (!isActive) {
-                        activeWindowIndices.push_back(i); // 激活窗口
+                    if (ImGui::BeginTabItem(window.name.c_str(), &window.isOpen)) {
+                        // 激活或取消激活该窗口
+                        if (!isActive) {
+                            activeWindowIndices.push_back(i); // 激活窗口
+                        }
+                        else {
+                            //activeWindowIndices.erase(it);
+                        }
+                        ImGui::EndTabItem();
                     }
-                    else {
-                        //activeWindowIndices.erase(it);
-                    }
-                    ImGui::EndTabItem();
                 }
-            }
 
-            ImGui::EndTabBar();
+                ImGui::EndTabBar();
+            }
         }
+        ImGui::End(); // 结束窗口栏
+        // 移除被关闭的窗口
+        windows.erase(
+            std::remove_if(windows.begin(), windows.end(), [](const Window& window) {
+                return !window.isOpen;
+                }),
+            windows.end()
+        );
     }
-    ImGui::End(); // 结束窗口栏
-    // 移除被关闭的窗口
-    windows.erase(
-        std::remove_if(windows.begin(), windows.end(), [](const Window& window) {
-            return !window.isOpen;
-            }),
-        windows.end()
-    );
 }
 
 void DrawMainContent(std::vector<std::unique_ptr<Model>>& meshes) {
