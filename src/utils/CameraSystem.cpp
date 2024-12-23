@@ -1,6 +1,11 @@
 #include "CameraSystem.h"
 
 Camera camera(vecf3(0.0f, 0.0f, 3.0f));
+Camera forwardCamera(vecf3(0.0f, 0.0f, 3.0f));
+Camera backCamera(vecf3(0.0f, 0.0f, -3.0f));
+Camera leftCamera(vecf3(3.0f, 0.0f, 0.0f));
+Camera rightCamera(vecf3(-3.0f, 0.0f, 0.0f));
+Camera upCamera(vecf3(0.0f, 3.0f, 0.0f));
 float last_x = SCR_WIDTH / 2.0f;
 float last_y = SCR_HEIGHT / 2.0f;
 bool init_mouse = true;
