@@ -8,8 +8,8 @@ void loadChineseFont() {
 }
 
 // 图形系统：屏幕设置
-uint32_t SCR_WIDTH = 800;
-uint32_t SCR_HEIGHT = 600;
+uint32_t SCR_WIDTH = 1600;
+uint32_t SCR_HEIGHT = 1200;
 
 // Getter 函数实现
 uint32_t getScreenWidth() {
