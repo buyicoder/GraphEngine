@@ -53,4 +53,13 @@ target_include_directories(${PROJECT_NAME}
     ${EIGEN_UNS}
     ${DEPS}
 )
+# 设置目标的输出路径
+set(OUTPUT_DIR "${CMAKE_BINARY_DIR}/out/build/x64-Debug")
+
+# 添加自定义命令以复制glfw3.dll
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+    "${GLFW_DIR}/lib-vc2022/glfw3.dll"
+    "glfw3.dll"
+)
 

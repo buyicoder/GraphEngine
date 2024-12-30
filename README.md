@@ -1,5 +1,9 @@
 # 图形引擎
 
+GitHub：https://github.com/buyicoder/GraphEngine.git
+
+Contributors:buyicoder、wolflemon、huyuxiu7
+
 ## 我们的工作
 
 我们在实时三维图形基础的第三次作业的代码基础上实现了一个基本的图形渲染引擎框架。
