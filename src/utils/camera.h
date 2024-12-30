@@ -41,9 +41,10 @@ public:
     float movement_speed;
     float mouse_sensitivity;
     float zoom;
+    bool moveable;
 
     // Constructor with vectors
-    Camera(const vecf3& position = vecf3(0.0f, 0.0f, 0.0f), const vecf3& up = vecf3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
+    Camera(const vecf3& position = vecf3(0.0f, 0.0f, 0.0f), const vecf3& up = vecf3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH,bool moveable=false);
     // Constructor with scalar values
     Camera(float pos_x, float pos_y, float pos_z, float up_x, float up_y, float up_z, float yaw, float pitch);
 

@@ -1,10 +1,10 @@
 #include "CameraSystem.h"
 
-Camera camera(vecf3(0.0f, 0.0f, 3.0f));
-Camera forwardCamera(vecf3(0.0f, 0.0f, 3.0f));
-Camera backCamera(vecf3(0.0f, 0.0f, -3.0f));
-Camera leftCamera(vecf3(3.0f, 0.0f, 0.0f));
-Camera rightCamera(vecf3(-3.0f, 0.0f, 0.0f));
+Camera camera(vecf3(0.0f, 0.0f, 3.0f), vecf3(0.0f, 1.0f, 0.0f),-90.0f,0.0f,true);
+Camera forwardCamera(vecf3(0.0f, 0.0f, 3.0f), vecf3(0.0f, 1.0f, 0.0f),-90.0f,0.0f,false);
+Camera backCamera(vecf3(0.0f, 0.0f, -3.0f), vecf3(0.0f, 1.0f, 0.0f),90.0f,0.0f,false);
+Camera leftCamera(vecf3(3.0f, 0.0f, 0.0f), vecf3(0.0f, 1.0f, 0.0f),180.0f,0.0f,false);
+Camera rightCamera(vecf3(-3.0f, 0.0f, 0.0f), vecf3(0.0f, 1.0f, 0.0f),0.0f,0.0f,false);
 Camera upCamera(vecf3(0.0f, 3.0f, 0.0f));
 float last_x = SCR_WIDTH / 2.0f;
 float last_y = SCR_HEIGHT / 2.0f;
@@ -13,9 +13,18 @@ bool camera_movement_enabled = true;
 float base_angle_y = 0.0f;
 float angle_x = 0.0f;
 
+int currentCamera = MAINCAMERA;
+
 // 摄像机系统：获取函数实现
-Camera* getCamera() {
-    return &camera;
+Camera *getCamera() {
+    
+    if(currentCamera == MAINCAMERA)return &camera;
+    if (currentCamera == FORWARDCAMERA)return &forwardCamera;
+    if (currentCamera == BACKCAMERA)return &backCamera;
+    if (currentCamera == LEFTCAMERA)return &leftCamera;
+    if (currentCamera == RIGHTCAMERA)return &rightCamera;
+    if (currentCamera == UPCAMERA)return &upCamera;
+
 }
 
 float getLastX() {

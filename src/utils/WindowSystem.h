@@ -33,6 +33,7 @@ extern GLFWwindow* window;
 extern bool showResourceExplorer;
 extern bool showWindowBar;
 extern bool showCreateNewProjectWindow ;
+extern bool showModelSetting;
 extern std::string currentPath;
 extern std::vector<Window> windows;
 extern int activeWindowIndex;

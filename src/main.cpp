@@ -204,9 +204,9 @@ int main(int argc, char **argv) {
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         glPolygonMode(GL_FRONT_AND_BACK ,GL_FILL);
 
-        shader.set_vecf3("camera_pos", camera.position);
-        shader.set_matf4("projection", camera.get_projection_matrix(SCR_WIDTH, SCR_HEIGHT, 0.1f, 100.0f));
-        shader.set_matf4("view", camera.get_view_matrix());
+        shader.set_vecf3("camera_pos", (*getCamera()).position);
+        shader.set_matf4("projection", (*getCamera()).get_projection_matrix(SCR_WIDTH, SCR_HEIGHT, 0.1f, 100.0f));
+        shader.set_matf4("view", (*getCamera()).get_view_matrix());
 
 
         shader.set_matf4("model", matf4::Identity());

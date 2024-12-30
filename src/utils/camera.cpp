@@ -2,9 +2,9 @@
 
 namespace Utils {
 
-Camera::Camera(const vecf3& position, const vecf3& up, float yaw, float pitch)
+Camera::Camera(const vecf3& position, const vecf3& up, float yaw, float pitch,bool moveable)
     : front(vecf3(0.0f, 0.0f, -1.0f)), movement_speed(SPEED), mouse_sensitivity(SENSITIVITY), zoom(ZOOM),
-      position(position), world_up(up), yaw(yaw), pitch(pitch) {
+      position(position), world_up(up), yaw(yaw), pitch(pitch),moveable(moveable) {
     update_camera_vectors();
 }
 
@@ -60,50 +60,54 @@ matf4 Camera::get_projection_matrix(float width, float height, float near, float
 }
 
 void Camera::process_keyboard(Movement direction, float delta_time) {
-    float velocity = movement_speed * delta_time;
-    switch (direction) {
-    case Movement::FORWARD:
-        position += front * velocity;
-        break;
-    case Movement::BACKWARD:
-        position -= front * velocity;
-        break;
-    case Movement::LEFT:
-        position -= right * velocity;
-        break;
-    case Movement::RIGHT:
-        position += right * velocity;
-        break;
-    case Movement::UP:
-        position += up * velocity;
-        break;
-    case Movement::DOWN:
-        position -= up * velocity;
-        break;
-    default:
-        break;
+    if (moveable) {
+        float velocity = movement_speed * delta_time;
+        switch (direction) {
+        case Movement::FORWARD:
+            position += front * velocity;
+            break;
+        case Movement::BACKWARD:
+            position -= front * velocity;
+            break;
+        case Movement::LEFT:
+            position -= right * velocity;
+            break;
+        case Movement::RIGHT:
+            position += right * velocity;
+            break;
+        case Movement::UP:
+            position += up * velocity;
+            break;
+        case Movement::DOWN:
+            position -= up * velocity;
+            break;
+        default:
+            break;
+        }
     }
 }
 
 void Camera::process_mouse_movement(float xoffset, float yoffset, bool constrain_pitch) {
-    xoffset *= mouse_sensitivity;
-    yoffset *= mouse_sensitivity;
+    if (moveable) {
+        xoffset *= mouse_sensitivity;
+        yoffset *= mouse_sensitivity;
 
-    yaw += xoffset;
-    pitch += yoffset;
+        yaw += xoffset;
+        pitch += yoffset;
 
-    // Make sure that when pitch is out of bounds, screen doesn't get flipped
-    if (constrain_pitch) {
-        if (pitch > 89.0f) {
-            pitch = 89.0f;
+        // Make sure that when pitch is out of bounds, screen doesn't get flipped
+        if (constrain_pitch) {
+            if (pitch > 89.0f) {
+                pitch = 89.0f;
+            }
+            if (pitch < -89.0f) {
+                pitch = -89.0f;
+            }
         }
-        if (pitch < -89.0f) {
-            pitch = -89.0f;
-        }
+
+        // Update Front, Right and Up Vectors using the updated Euler angles
+        update_camera_vectors();
     }
-
-    // Update Front, Right and Up Vectors using the updated Euler angles
-    update_camera_vectors();
 }
 
 void Camera::process_mouse_scroll(float yoffset) {

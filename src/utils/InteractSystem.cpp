@@ -5,10 +5,12 @@ void DrawEditor() {
     ImGui::GetIO().FontGlobalScale = 2.0f; // 这里将字体放大 1.5 倍，你可以根据需要调整这个值
     DrawMainMenu();
     DrawResourceExplorer();
+    DrawModelSetting();
     DrawCreateNewProjectWindow();
     DrawWindowBar();    // 窗口栏
     DrawMainContent(getMeshes());  // 主内容区域
 }
+
 
 void DrawMainMenu() {
     if (ImGui::BeginMainMenuBar())
@@ -52,6 +54,9 @@ void DrawMainMenu() {
             }
             if (ImGui::MenuItem("Show Window Bar", NULL, &showWindowBar)) {
                 //showWindowBar = !showWindowBar;//
+            }
+            if (ImGui::MenuItem("showModelSetting", NULL, &showModelSetting)) {
+
             }
             ImGui::MenuItem("resource");
             ImGui::MenuItem("Zoom In", "Ctrl++");
@@ -224,6 +229,30 @@ bool DrawHoverBorder(const char* label, const char* shortcut)
         drawList->AddRect(min, max, borderColor, 0.0f, ImDrawFlags_RoundCornersNone, thickness);
     }
     return hovered;
+}
+
+void DrawModelSetting() {
+    if (showModelSetting) {
+        //std::cout << showResourceExplorer << std::endl;
+        ImGui::Begin("Model Setting", &showModelSetting, ImGuiWindowFlags_HorizontalScrollbar);
+        if (ImGui::Button("main", ImVec2(100, 30))) {
+            currentCamera = MAINCAMERA;
+        }
+        if (ImGui::Button("forward", ImVec2(100, 30))) {
+            currentCamera = FORWARDCAMERA;
+        }
+        if (ImGui::Button("back", ImVec2(100, 30))) {
+            currentCamera = BACKCAMERA;
+        }
+        if (ImGui::Button("left", ImVec2(100, 30))) {
+            currentCamera = LEFTCAMERA;
+        }
+        if (ImGui::Button("right", ImVec2(100, 30))) {
+            currentCamera = RIGHTCAMERA;
+        }
+
+        ImGui::End();
+    }
 }
 
 void DrawResourceExplorer()

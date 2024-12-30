@@ -32,9 +32,17 @@ extern bool init_mouse;
 extern bool camera_movement_enabled;
 extern float base_angle_y;
 extern float angle_x;
-
+extern int currentCamera;
+enum camera {
+    MAINCAMERA,
+    FORWARDCAMERA,
+    BACKCAMERA,
+    LEFTCAMERA,
+    RIGHTCAMERA,
+    UPCAMERA
+};
 // 摄像机系统：获取函数声明
-Camera* getCamera();
+Camera *getCamera();
 float getLastX();
 float getLastY();
 bool getInitMouse();

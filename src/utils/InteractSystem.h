@@ -48,3 +48,4 @@ void DisplayDirectoryContents(const std::string& path);
 void DrawMainMenu();
 void DrawEditor();
 void DisplayFileContents(const std::string& filepath);
+void DrawModelSetting();

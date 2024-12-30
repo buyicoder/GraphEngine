@@ -31,22 +31,22 @@ void process_input(GLFWwindow* window) {
     }
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
-        if (camera_movement_enabled)camera.process_keyboard(Camera::Movement::FORWARD, delta_time);
+        if (camera_movement_enabled)(*getCamera()).process_keyboard(Camera::Movement::FORWARD, delta_time);
     }
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
-        if (camera_movement_enabled)camera.process_keyboard(Camera::Movement::BACKWARD, delta_time);
+        if (camera_movement_enabled)(*getCamera()).process_keyboard(Camera::Movement::BACKWARD, delta_time);
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        if (camera_movement_enabled)camera.process_keyboard(Camera::Movement::LEFT, delta_time);
+        if (camera_movement_enabled)(*getCamera()).process_keyboard(Camera::Movement::LEFT, delta_time);
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        if (camera_movement_enabled)camera.process_keyboard(Camera::Movement::RIGHT, delta_time);
+        if (camera_movement_enabled)(*getCamera()).process_keyboard(Camera::Movement::RIGHT, delta_time);
     }
     if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS) {
-        if (camera_movement_enabled)camera.process_keyboard(Camera::Movement::UP, delta_time);
+        if (camera_movement_enabled)(*getCamera()).process_keyboard(Camera::Movement::UP, delta_time);
     }
     if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS) {
-        if (camera_movement_enabled)camera.process_keyboard(Camera::Movement::DOWN, delta_time);
+        if (camera_movement_enabled)(*getCamera()).process_keyboard(Camera::Movement::DOWN, delta_time);
     }
 
     if (glfwGetKey(window, GLFW_KEY_B) == GLFW_PRESS) {
@@ -116,12 +116,12 @@ void mouse_callback(GLFWwindow* window, double xpos, double ypos) {
 
     // base_angle_y += static_cast<float>(xoffset);
     // angle_x += static_cast<float>(yoffset);
-    if (camera_movement_enabled)camera.process_mouse_movement(xoffset, yoffset);
+    if (camera_movement_enabled)(*getCamera()).process_mouse_movement(xoffset, yoffset);
 
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset) {
-    if (camera_movement_enabled)camera.process_mouse_scroll(static_cast<float>(yoffset));
+    if (camera_movement_enabled)(*getCamera()).process_mouse_scroll(static_cast<float>(yoffset));
 }
 bool DetectMouseOutsideClick() {
     ImGuiIO& io = ImGui::GetIO();

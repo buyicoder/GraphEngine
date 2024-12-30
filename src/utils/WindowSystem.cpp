@@ -7,6 +7,7 @@ GLFWwindow* window=nullptr;
 bool showResourceExplorer = true;
 bool showCreateNewProjectWindow = false;
 bool showWindowBar = true;
+bool showModelSetting = true;
 std::string currentPath = std::filesystem::current_path().string();
 std::vector<Window> windows = {
 };
