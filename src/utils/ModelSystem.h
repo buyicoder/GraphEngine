@@ -29,7 +29,7 @@ extern float simplification_ratio;
 extern bool shows_border;
 extern bool isInsideVertexCountsWindow;
 extern bool isButtonClicked;
-
+extern vecf3 modelscale;
 // Getter º¯ÊýÉùÃ÷
 std::vector<int>* getVertexCountIndices();
 std::vector<std::unique_ptr<Model>>& getMeshes();

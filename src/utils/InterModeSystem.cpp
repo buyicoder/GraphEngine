@@ -4,6 +4,7 @@ int InterMode = GLOBALEDIT;
 
 void SetInterMode() {
 	if (InterMode == SCENEEXCURISION) {//场景游览模式
+		currentCamera = MAINCAMERA;
 		camera_movement_enabled = true;
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	}

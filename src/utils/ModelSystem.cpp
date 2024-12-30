@@ -4,6 +4,7 @@
 std::vector<int> vertexCountIndices;
 std::vector<std::unique_ptr<Model>> meshes;
 vecf3 pos = {0.0f,0.0f,0.0f};
+vecf3 modelscale = {3.0f,1.0f,1.0f};
 int current_index = 0;
 float simplification_ratio = 0.99f;
 bool shows_border = false;
@@ -60,10 +61,17 @@ void DrawModel(Shader shader,Shader border_shader) {
     // rot matrix
     matf4 model_transform;
     model_transform << cos(angle_y), 0.0f, sin(angle_y), model_pos[0],
-        0.0f, 1.0f, 0.0f, model_pos[1],
-        -sin(angle_y), 0.0f, cos(angle_y), model_pos[2],
-        0.0f, 0.0f, 0.0f, 1.0f;
+                        0.0f, 1.0f, 0.0f, model_pos[1],
+                        -sin(angle_y), 0.0f, cos(angle_y), model_pos[2],
+                        0.0f, 0.0f, 0.0f, 1.0f;
     shader.set_matf4("model", model_transform);
+
+    matf4 scale_transform;
+    scale_transform << modelscale[0], 0.0f, 0.0f, 0.0f,
+        0.0f, modelscale[1], 0.0f, 0.0f,
+        0.0f, 0.0f, modelscale[2],0.0f,
+        0.0f, 0.0f, 0.0f, 1.0f;
+    shader.set_matf4("scaling", scale_transform);
     meshes[current_index]->va->draw(shader);
 
     //render borders
