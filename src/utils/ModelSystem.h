@@ -30,6 +30,7 @@ extern bool shows_border;
 extern bool isInsideVertexCountsWindow;
 extern bool isButtonClicked;
 extern vecf3 modelscale;
+extern bool isRotating;
 // Getter º¯ÊýÉùÃ÷
 std::vector<int>* getVertexCountIndices();
 std::vector<std::unique_ptr<Model>>& getMeshes();

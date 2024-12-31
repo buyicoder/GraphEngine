@@ -250,7 +250,9 @@ void DrawModelSetting() {
         if (ImGui::Button("right", ImVec2(100, 30))) {
             currentCamera = RIGHTCAMERA;
         }
-
+        if (ImGui::Button("rotating", ImVec2(100, 30))) {
+            isRotating = !isRotating;
+        }
         ImGui::End();
     }
 }
