@@ -253,6 +253,41 @@ void DrawModelSetting() {
         if (ImGui::Button("rotating", ImVec2(100, 30))) {
             isRotating = !isRotating;
         }
+        ImGui::Text("vertices: %d", meshes[current_index]->positions.size());
+        ImGui::Text("faces: %d", meshes[current_index]->indices.size());
+        ImGui::Text("borders: %s", shows_border ? "On" : "Off");
+
+        static int counter = 0;
+        static float f = 0.0f;
+
+        if (ImGui::Button("Button")) {
+            counter++;
+        }
+        ImGui::Text("counter = %d", counter);
+
+
+        //ImGui::Text("Application average %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate);
+        for (size_t i = 0; i < vertexCountIndices.size(); ++i) {
+            std::string buttonLabel = std::to_string(meshes[vertexCountIndices[i]]->positions.size());
+            if (ImGui::TreeNodeEx(buttonLabel.c_str(), ImGuiTreeNodeFlags_SpanAvailWidth)) {
+                // 当按钮被点击时，切换到相应顶点数的模型
+                current_index = i;
+
+                // 在树节点展开时显示额外的信息
+                ImGui::Text("Additional Information:");
+                ImGui::Text("Vertices: %d", meshes[vertexCountIndices[i]]->positions.size());
+                ImGui::Text("Faces: %d", meshes[vertexCountIndices[i]]->indices.size());
+
+                ImGui::TreePop(); // 关闭树节点
+            }
+            // 检查鼠标是否在当前按钮上
+            if (ImGui::IsItemClicked(0)) {
+                isInsideVertexCountsWindow = true;
+                std::cout << buttonLabel.c_str() << " was clicked" << std::endl;
+                current_index = i;
+            }
+            //std::cout << "current_index has been " << vertexCountIndices[i] << std::endl;
+        }
         ImGui::End();
     }
 }
